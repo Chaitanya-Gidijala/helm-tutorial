@@ -1,0 +1,20 @@
+replicaCount: 2
+image:
+  repository: chaitanyagidijala123/helm-learning
+  tag: latest
+  pullPolicy: IfNotPresent
+service:
+  type: NodePort
+  port: 80
+  targetPort: 3000
+  nodePort: 30002
+config:
+  NODE_ENV: dev
+  PORT: "3000"
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "250m"
+  limits:
+    memory: "128Mi"
+    cpu: "500m"

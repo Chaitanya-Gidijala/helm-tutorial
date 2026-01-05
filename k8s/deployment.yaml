@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-app
+  namespace: helm-practice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-app
+  template:
+    metadata:
+      labels:
+        app: node-app
+    spec:
+      containers:
+      - name: node-app
+        image: chaitanyagidijala123/helm-learning:latest
+        imagePullPolicy: IfNotPresent  # Important for local Minikube images not pushed to a registry
+        ports:
+        - containerPort: 3000
+        envFrom:
+        - configMapRef:
+            name: node-app-config
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"

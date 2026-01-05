@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: node-app-config
+  namespace: helm-practice
+data:
+  NODE_ENV: "production"
+  PORT: "3000"

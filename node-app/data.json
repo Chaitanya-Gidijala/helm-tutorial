@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "name": "Kubernetes",
+        "category": "Container Orchestration",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 2,
+        "name": "Docker",
+        "category": "Containerization",
+        "difficulty": "Medium"
+    },
+    {
+        "id": 3,
+        "name": "Node.js",
+        "category": "Runtime",
+        "difficulty": "Easy"
+    }
+]

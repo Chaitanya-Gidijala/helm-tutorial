@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kubernetes Learning App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fa-solid fa-cube"></i>
+                <h1>Hey, Welcome to the Tech Stack Manager</h1>
+            </div>
+            <!-- <p class="subtitle">Welcome to Tech Stack Manager to track your technologies list and concepts</p> -->
+        </header>
+
+        <main>
+            <div class="card-form">
+                <h2><i class="fa-solid fa-plus-circle"></i> Add New Technology</h2>
+                <form id="addForm">
+                    <div class="input-group">
+                        <label>Name</label>
+                        <input type="text" id="name" placeholder="e.g. Helm" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Category</label>
+                        <input type="text" id="category" placeholder="e.g. Package Manager" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Difficulty</label>
+                        <select id="difficulty">
+                            <option value="Easy">Easy</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Hard">Hard</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary">Add Item</button>
+                </form>
+            </div>
+
+            <div class="list-section">
+                <h2><i class="fa-solid fa-list"></i> Concepts Tracker</h2>
+                <div id="itemsGrid" class="grid-container">
+                    <!-- Items will be injected here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Item</h2>
+            <form id="editForm">
+                <input type="hidden" id="editId">
+                <div class="input-group">
+                    <label>Name</label>
+                    <input type="text" id="editName" required>
+                </div>
+                <div class="input-group">
+                    <label>Category</label>
+                    <input type="text" id="editCategory" required>
+                </div>
+                <div class="input-group">
+                    <label>Difficulty</label>
+                    <select id="editDifficulty">
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

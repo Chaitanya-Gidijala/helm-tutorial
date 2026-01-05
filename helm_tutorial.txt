@@ -1,0 +1,233 @@
+================================================================================
+COMPLETE KUBERNETES HELM TUTORIAL & COMMAND GUIDE
+================================================================================
+
+TABLE OF CONTENTS
+1. Introduction to Helm
+2. Key Concepts
+3. Installation
+4. Working with Repositories
+5. Managing Releases (Install, Upgrade, Rollback)
+6. Creating and Managing Custom Charts
+7. Helm Commands Cheat Sheet
+
+================================================================================
+1. INTRODUCTION TO HELM
+================================================================================
+Helm is the package manager for Kubernetes. Just as 'apt' or 'yum' manages 
+packages on Linux, or 'npm' manages Node.js packages, Helm manages Kubernetes 
+applications.
+
+Why use Helm?
+- Complexity Management: Kubernetes YAML manifests can get very complex. Helm 
+  allows you to parameterize them.
+- Reusability: Share your applications as "Charts".
+- Versioning: Helm tracks versions of your application deployments (Releases).
+- Rollbacks: Easily roll back to a previous version if an upgrade fails.
+
+================================================================================
+2. KEY CONCEPTS
+================================================================================
+There are three main concepts to understand:
+
+1. Chart: A bundle of information necessary to create an instance of a 
+   Kubernetes application. It contains templates (YAML files with placeholders) 
+   and default configuration values.
+
+2. Config: The configuration information that contains settings to merge into 
+   the packaged chart to create a releasable object. This is usually your 
+   'values.yaml' file.
+
+3. Release: A running instance of a chart, combined with a specific config. 
+   You can install the same chart multiple times (e.g., "mysql-prod" and 
+   "mysql-test"), and each will be a unique release.
+
+================================================================================
+3. INSTALLATION
+================================================================================
+(Assuming you have a Kubernetes cluster and 'kubectl' configured)
+
+Windows (using Chocolatey):
+  choco install kubernetes-helm
+
+Windows (using Scoop):
+  scoop install helm
+
+Linux/macOS (using script):
+  curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+  chmod 700 get_helm.sh
+  ./get_helm.sh
+
+Verify installation:
+  helm version
+
+================================================================================
+4. WORKING WITH REPOSITORIES
+================================================================================
+Helm charts are stored in repositories. The most common one was "stable", but 
+now charts are distributed across many repos (Bitnami is very popular).
+
+Add a repository (e.g., Bitnami):
+  helm repo add bitnami https://charts.bitnami.com/bitnami
+
+Update your local cache of charts:
+  helm repo update
+
+Search for a chart (e.g., Nginx):
+  helm search repo nginx
+
+List added repositories:
+  helm repo list
+
+================================================================================
+5. MANAGING RELEASES
+================================================================================
+
+--- INSTALLING A CHART ---
+To install a chart (creating a Release):
+Syntax: helm install [RELEASE_NAME] [CHART_NAME]
+
+Example:
+  helm install my-nginx bitnami/nginx
+
+This deploys Nginx to your cluster with default configuration.
+
+--- CUSTOMIZING INSTALLATION ---
+You can override defaults using the '--set' flag or a custom YAML file.
+
+Using --set:
+  helm install my-nginx bitnami/nginx --set service.type=NodePort
+
+Using a values file (recommended for production):
+  1. Get default values:
+     helm show values bitnami/nginx > values.yaml
+  2. Edit values.yaml with your changes.
+  3. Install using the file:
+     helm install my-nginx bitnami/nginx -f values.yaml
+
+--- LISTING RELEASES ---
+See what is running:
+  helm list
+  helm list --all-namespaces
+
+--- UPGRADING A RELEASE ---
+If you change your 'values.yaml' or want to upgrade the chart version:
+  helm upgrade my-nginx bitnami/nginx -f values.yaml
+
+--- ROLLING BACK ---
+If an upgrade breaks something, roll back to the previous revision:
+  helm rollback my-nginx 1
+  (Where '1' is the revision number)
+
+--- UNINSTALLING ---
+Remove the application:
+  helm uninstall my-nginx
+
+================================================================================
+6. CREATING AND MANAGING CUSTOM CHARTS
+================================================================================
+You can create your own charts to package your applications.
+
+Create a new chart scaffold:
+  helm create my-chart
+
+This creates a directory structure:
+  my-chart/
+    Chart.yaml   # Meta-information (name, version, description)
+    values.yaml  # Default configuration values
+    charts/      # Dependencies
+    templates/   # The actual K8s YAML files with template logic
+      deployment.yaml
+      service.yaml
+      ...
+
+--- TEMPLATING BASICS ---
+In 'templates/deployment.yaml', you might see:
+  replicas: {{ .Values.replicaCount }}
+
+This tells Helm to look in 'values.yaml' for 'replicaCount' and inject it here.
+
+Linting (checking for errors):
+  helm lint my-chart
+
+Dry Run (see the generated YAML without installing):
+  helm install my-test-release ./my-chart --debug --dry-run
+
+Packaging (create a .tgz file to share):
+  helm package my-chart
+
+================================================================================
+7. HELM COMMANDS CHEAT SHEET
+================================================================================
+
+--- REPOSITORIES ---
+helm repo add [name] [url]    # Add a repository
+helm repo update              # Update repo information
+helm repo list                # List added repos
+helm repo remove [name]       # Remove a repo
+helm search repo [keyword]    # Search for charts in added repos
+helm search hub [keyword]     # Search Artifact Hub
+
+--- INSTALLATION & MANAGEMENT ---
+helm install [name] [chart]   # Install a chart
+helm install [name] [chart] -f values.yaml  # Install with custom values
+helm install [name] [chart] --set key=val   # Install with overrides
+helm list                     # List releases in current namespace
+helm list -A                  # List releases in all namespaces
+helm status [name]            # Get detailed status of a release
+helm show values [chart]      # Inspect default values of a chart
+helm get manifest [name]      # Print the YAML manifest of a release
+helm get values [name]        # Print the user-supplied values of a release
+
+--- UPGRADE & ROLLBACK ---
+helm upgrade [name] [chart]   # Upgrade a release
+helm history [name]           # View revision history
+helm rollback [name] [rev]    # Roll back to a specific revision
+helm uninstall [name]         # Uninstall a release
+
+--- CHART DEVELOPMENT ---
+helm create [name]            # Create a new chart directory
+helm lint [path]              # Check chart for issues
+helm template [name] [path]   # Render templates locally (dry run)
+helm package [path]           # Package chart into a .tgz file
+helm dependency update [path] # Update chart dependencies
+
+--- HELP ---
+helm --help                   # General help
+helm [command] --help         # Help for specific command
+
+--- MONITORING & TROUBLESHOOTING ---
+helm status [name]            # Current state of the release
+helm list --failed            # List releases that failed to install/upgrade
+helm test [name]              # Run tests defined in the chart
+kubectl logs -l app.kubernetes.io/instance=[name] # View logs for a release
+kubectl describe pod -l app.kubernetes.io/instance=[name] # Troubleshoot pod issues
+kubectl get events --sort-by=.metadata.creationTimestamp # See recent cluster events
+
+--- EXAMPLE COMMANDS (node-app-demo) ---
+
+# Installation & Basic Management
+helm install my-app ./node-app-demo           # Instclearall from local directory
+helm install my-app ./node-app-demo -f prod-values.yaml # Install with production config
+helm list                                     # See if 'my-app' is listed
+helm status my-app                            # Detailed status of the app
+helm show values ./node-app-demo              # View default values of the local chart
+
+# Inspections
+helm get manifest my-app                      # See all Kubernetes YAML generated for the app
+helm get values my-app                        # See the custom values you used for the install
+
+# Upgrades & History
+helm upgrade my-app ./node-app-demo --set replicaCount=3 # Scale pods up to 3
+helm history my-app                           # See all previous versions of your deployment
+helm rollback my-app 1                        # Go back to version 1 if version 2 is buggy
+
+# Chart Development
+helm lint ./node-app-demo                     # Check your templates for syntax errors
+helm template my-app ./node-app-demo          # Preview YAML output without deploying
+helm package ./node-app-demo                  # Create a .tgz to share with others
+
+# Monitoring & Logs
+kubectl logs -l app.kubernetes.io/instance=my-app       # View logs of the node application
+kubectl describe pod -l app.kubernetes.io/instance=my-app # Debug pod crashes or failures
+helm uninstall my-app                         # Completely remove the application
